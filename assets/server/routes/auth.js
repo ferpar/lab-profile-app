@@ -2,6 +2,7 @@ const express = require("express");
 const passport = require('passport');
 const router = express.Router();
 const User = require("../models/User");
+const parser = require("../config/cloudinary");
 
 // Bcrypt to encrypt passwords
 const bcrypt = require("bcrypt");
@@ -107,6 +108,49 @@ router.get('/loggedin', (req, res, next) => {
   }
   res.status(403).json({ message: 'Unauthorized' });
 });
+
+
+router.post("/upload", parser.single("picture"), (req, res) => {
+  User.findByIdAndUpdate(req.user.id, { image: req.file.url })
+  .then(() => {
+    res.json({
+      success: true,
+      pictureUrl: req.file.url
+    });
+  })
+  .catch ((err)=>{
+    res.json({
+      success: false
+    });
+  })
+});
+
+
+router.post("/edit", (req, res) => {
+  const { username, password, campus, course } = req.body;
+
+  const myUser = {};
+
+  if (username) {
+    myUser.username = username;
+  }
+
+  if (campus) {
+    myUser.campus = campus;
+  }
+
+  if (course) {
+    myUser.course = course;
+  }
+
+  User.findByIdAndUpdate(req.user.id, myUser).then(() => {
+    res.json({
+      success: true,
+      myUser
+    });
+  });
+});
+
 
 
 module.exports = router;

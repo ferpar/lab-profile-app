@@ -39,9 +39,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-
-app.use(express.static(path.join(__dirname, 'public')));
-
 // Enable authentication using session + passport
 app.use(session({
   secret: 'irongenerator',
@@ -54,6 +51,11 @@ require('./passport')(app);
 
 const authRoutes = require('./routes/auth');
 app.use('/auth', authRoutes);
+
+
+app.use((req, res) => {
+  res.sendFile(`${__dirname}/public/index.html`);
+});
       
 
 module.exports = app;
