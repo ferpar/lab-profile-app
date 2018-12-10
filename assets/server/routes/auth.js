@@ -122,6 +122,7 @@ router.post("/upload", parser.single("picture"), (req, res) => {
     res.json({
       success: false
     });
+    return err
   })
 });
 
